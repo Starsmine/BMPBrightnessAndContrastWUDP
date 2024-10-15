@@ -156,7 +156,7 @@ void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
 
     //wrong formula for negative numbers
     if (position < 0)
-        contrastOutput = position * -2.5;
+        contrastOutput = (position*2.5) + 50;
     else
         contrastOutput = position/2 + 50;
 
@@ -255,6 +255,6 @@ void MainWindow::UDPoutput()
 
     std::string alpha = b + c;
     QByteArray datagram = QByteArray::fromStdString(alpha);
-    socket->writeDatagram(datagram, QHostAddress("192.168.0.251"), 80); //hardcoded address is an issue
+    socket->writeDatagram(datagram, QHostAddress("192.168.0.175"), 80); //hardcoded address is an issue
 }
 
