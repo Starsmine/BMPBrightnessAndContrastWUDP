@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QUdpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void initSocket();
 
 private slots:
     void on_pushButton_released();
@@ -55,6 +57,8 @@ private:
 
     int brightnessOutput = 50;
     int contrastOutput = 50;
+    QUdpSocket *socket;
+    QHostAddress *addr;
 
 };
 #endif // MAINWINDOW_H

@@ -154,6 +154,7 @@ void MainWindow::on_horizontalSlider_2_sliderMoved(int position)
     pm5 = QPixmap::fromImage(tmp);
     ui->label_8->setPixmap(pm5);
 
+    //wrong formula for negative numbers
     if (position < 0)
         contrastOutput = position * -2.5;
     else
@@ -230,8 +231,30 @@ void MainWindow::on_pushButton_3_released()
     imgout.save(fileName);
 }
 
+
+void MainWindow::initSocket()
+{
+    socket = new QUdpSocket(this);
+    addr = new QHostAddress();
+    addr->setAddress(45);
+
+}
+
+
 void MainWindow::UDPoutput()
 {
+    std::string b = std::to_string(brightnessOutput);
+    if (b.length() == 1){
+        b = "0" + b;
+    }
 
+    std::string c = std::to_string(contrastOutput);
+    if (c.length() == 1){
+        c = "0" + c;
+    }
+
+    std::string alpha = b + c;
+    QByteArray datagram = QByteArray::fromStdString(alpha);
+    socket->writeDatagram(datagram, QHostAddress("192.168.0.251"), 80); //hardcoded address is an issue
 }
 
