@@ -235,8 +235,7 @@ void MainWindow::on_pushButton_3_released()
 void MainWindow::initSocket()
 {
     socket = new QUdpSocket(this);
-    addr = new QHostAddress();
-    addr->setAddress(45);
+    //addr = new QHostAddress("192.168.215.124");
 
 }
 
@@ -255,6 +254,27 @@ void MainWindow::UDPoutput()
 
     std::string alpha = b + c;
     QByteArray datagram = QByteArray::fromStdString(alpha);
-    socket->writeDatagram(datagram, QHostAddress("192.168.0.175"), 80); //hardcoded address is an issue
+    socket->writeDatagram(datagram, QHostAddress("192.168.215.124"), 80); //hardcoded address is an issue
+}
+
+
+void MainWindow::on_TransferPhoto_pressed()
+{
+    QByteArray datagram = QByteArray::fromRawData((const char*)img.bits(), img.sizeInBytes());
+    socket->writeDatagram(datagram, 1024,  QHostAddress("192.168.215.124"), 80);
+   // printf(datagram);
+}
+
+
+void MainWindow::on_TransferOverlay_pressed()
+{
+    QByteArray datagram = QByteArray::fromRawData((const char*)img2.bits(), img.sizeInBytes());
+    socket->writeDatagram(datagram,  QHostAddress("192.168.215.124"), 80);
+}
+
+
+void MainWindow::on_ToggleOverlay_released()
+{
+
 }
 

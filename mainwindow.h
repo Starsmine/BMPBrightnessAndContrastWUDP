@@ -40,6 +40,10 @@ private slots:
 
     void UDPoutput();
 
+    void on_TransferPhoto_pressed();
+
+    void on_TransferOverlay_pressed();
+
 private:
     Ui::MainWindow *ui;
     //base

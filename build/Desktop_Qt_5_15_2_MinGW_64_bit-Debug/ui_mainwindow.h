@@ -40,6 +40,8 @@ public:
     QLabel *label_8;
     QPushButton *pushButton_4;
     QPushButton *pushButton_5;
+    QPushButton *TransferPhoto;
+    QPushButton *TransferOverlay;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -90,7 +92,7 @@ public:
         label_5->setGeometry(QRect(540, 340, 49, 16));
         pushButton_3 = new QPushButton(centralwidget);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setGeometry(QRect(730, 330, 171, 51));
+        pushButton_3->setGeometry(QRect(800, 330, 171, 51));
         label_6 = new QLabel(centralwidget);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(60, 40, 281, 251));
@@ -112,6 +114,12 @@ public:
         pushButton_5 = new QPushButton(centralwidget);
         pushButton_5->setObjectName(QString::fromUtf8("pushButton_5"));
         pushButton_5->setGeometry(QRect(540, 360, 75, 24));
+        TransferPhoto = new QPushButton(centralwidget);
+        TransferPhoto->setObjectName(QString::fromUtf8("TransferPhoto"));
+        TransferPhoto->setGeometry(QRect(700, 310, 101, 41));
+        TransferOverlay = new QPushButton(centralwidget);
+        TransferOverlay->setObjectName(QString::fromUtf8("TransferOverlay"));
+        TransferOverlay->setGeometry(QRect(700, 350, 101, 41));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -142,6 +150,8 @@ public:
         label_8->setText(QString());
         pushButton_4->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
         pushButton_5->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
+        TransferPhoto->setText(QCoreApplication::translate("MainWindow", "Transfer Photo", nullptr));
+        TransferOverlay->setText(QCoreApplication::translate("MainWindow", "Transfer Overlay", nullptr));
     } // retranslateUi
 
 };
