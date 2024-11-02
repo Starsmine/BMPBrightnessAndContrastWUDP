@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QUdpSocket>
+#include <QTcpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -62,6 +63,7 @@ private:
     int brightnessOutput = 50;
     int contrastOutput = 50;
     QUdpSocket *socket;
+    QTcpSocket *socketTcp;
     QHostAddress *addr;
 
 };
