@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QUdpSocket>
 #include <QTcpSocket>
+#include <QBuffer>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -256,7 +257,7 @@ void MainWindow::UDPoutput()
 
     std::string alpha = b + c;
     QByteArray datagram = QByteArray::fromStdString(alpha);
-    socket->writeDatagram(datagram, QHostAddress("192.168.215.124"), 80); //hardcoded address is an issue
+    socket->writeDatagram(datagram, QHostAddress("192.168.0.249"), 80); //hardcoded address is an issue
 }
 
 
@@ -304,7 +305,11 @@ void MainWindow::on_TransferPhoto_pressed()
 
 
   //to do - serialize, and header to be base
-      QByteArray datagram = QByteArray::fromRawData((const char*)img.bits(), img.sizeInBytes());
+      //QByteArray datagram = QByteArray::fromRawData((const char*)img.bits(), img.sizeInBytes());
+      QByteArray datagram;
+      QBuffer buffer(&datagram);
+      buffer.open(QIODevice::WriteOnly);
+      img.save(&buffer, "BMP");
       int totalSize = datagram.size();
       int packetSize = 1024;
       quint16 numPackets = (totalSize + packetSize - 1) / packetSize;  // Calculate total packets needed
@@ -312,6 +317,8 @@ void MainWindow::on_TransferPhoto_pressed()
 
       for (quint16 i = 0; i < numPackets; ++i) {
           // Extract chunk
+          _sleep(5);
+          //    QThread::msleep(1)
           QByteArray serial;
           quint8 sa = i;
           quint8 sb = i>>8;
@@ -320,7 +327,7 @@ void MainWindow::on_TransferPhoto_pressed()
           QByteArray chunk = serial.append(datagram.mid(i * packetSize, packetSize));
 
           // Send chunk
-          qint64 bytesSent = socket->writeDatagram(chunk, QHostAddress("192.168.12.19"), 80);
+          qint64 bytesSent = socket->writeDatagram(chunk, QHostAddress("192.168.0.249"), 80);
 
           // Check and log the result
           if (bytesSent == -1) {
@@ -347,7 +354,7 @@ void MainWindow::on_TransferOverlay_pressed()
     QByteArray datagram = QByteArray::fromRawData((const char*)img2.bits(), img.sizeInBytes());
     std::string dsize = std::to_string(datagram.size());
     std::cout << dsize;
-    socket->writeDatagram(datagram,  QHostAddress("192.168.215.124"), 80);
+    socket->writeDatagram(datagram,  QHostAddress("192.168.0.249"), 80);
 }
 
 QByteArray &operator<<(QByteArray &l, quint8 r)
