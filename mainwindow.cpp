@@ -237,7 +237,7 @@ void MainWindow::on_pushButton_3_released()
 void MainWindow::initSocket()
 {
     socket = new QUdpSocket(this);
-    //addr = new QHostAddress("192.168.215.124");
+    //addr = new QHostAddress("192.168.0.124");
     socketTcp = new QTcpSocket(this);
 
 }
@@ -257,7 +257,7 @@ void MainWindow::UDPoutput()
 
     std::string alpha = b + c;
     QByteArray datagram = QByteArray::fromStdString(alpha);
-    socket->writeDatagram(datagram, QHostAddress("192.168.0.249"), 80); //hardcoded address is an issue
+    socket->writeDatagram(datagram, QHostAddress(addr), 80); //hardcoded address is an issue
 }
 
 
@@ -311,23 +311,26 @@ void MainWindow::on_TransferPhoto_pressed()
       buffer.open(QIODevice::WriteOnly);
       img.save(&buffer, "BMP");
       int totalSize = datagram.size();
-      int packetSize = 1024;
+      int packetSize = 1020;
       quint16 numPackets = (totalSize + packetSize - 1) / packetSize;  // Calculate total packets needed
       int bytesSentTotal = 0;
+      quint8 objectnumber = 0;
 
       for (quint16 i = 0; i < numPackets; ++i) {
           // Extract chunk
-          _sleep(5);
+          _sleep(3);
           //    QThread::msleep(1)
           QByteArray serial;
           quint8 sa = i;
           quint8 sb = i>>8;
           serial.append(sb);
           serial.append(sa);
+          serial.append(objectnumber);
+          serial.append(objectnumber);
           QByteArray chunk = serial.append(datagram.mid(i * packetSize, packetSize));
 
           // Send chunk
-          qint64 bytesSent = socket->writeDatagram(chunk, QHostAddress("192.168.0.249"), 80);
+          qint64 bytesSent = socket->writeDatagram(chunk, QHostAddress(addr), 80);
 
           // Check and log the result
           if (bytesSent == -1) {
@@ -340,7 +343,7 @@ void MainWindow::on_TransferPhoto_pressed()
       }
 
       // Final log to confirm if entire image data was sent
-      if (bytesSentTotal == (totalSize + numPackets*2)) {
+      if (bytesSentTotal == (totalSize + numPackets*4)) {
           qDebug() << "Entire image sent successfully. Total size:" << bytesSentTotal;
       } else {
           qDebug() << "Error: Not all data sent. Total sent:" << bytesSentTotal << "of" << totalSize;
@@ -351,10 +354,47 @@ void MainWindow::on_TransferPhoto_pressed()
 
 void MainWindow::on_TransferOverlay_pressed()
 {
-    QByteArray datagram = QByteArray::fromRawData((const char*)img2.bits(), img.sizeInBytes());
-    std::string dsize = std::to_string(datagram.size());
-    std::cout << dsize;
-    socket->writeDatagram(datagram,  QHostAddress("192.168.0.249"), 80);
+    QByteArray datagram;
+    QBuffer buffer(&datagram);
+    buffer.open(QIODevice::WriteOnly);
+    img2.save(&buffer, "BMP");
+    int totalSize = datagram.size();
+    int packetSize = 1020;
+    quint16 numPackets = (totalSize + packetSize - 1) / packetSize;  // Calculate total packets needed
+    int bytesSentTotal = 0;
+
+    for (quint16 i = 0; i < numPackets; ++i) {
+        // Extract chunk
+        _sleep(3);
+        //    QThread::msleep(1)
+        QByteArray serial;
+        quint8 sa = i;
+        quint8 sb = i>>8;
+        serial.append(sb);
+        serial.append(sa);
+        serial.append(1);
+        serial.append(1);
+        QByteArray chunk = serial.append(datagram.mid(i * packetSize, packetSize));
+
+        // Send chunk
+        qint64 bytesSent = socket->writeDatagram(chunk, QHostAddress(addr), 80);
+
+        // Check and log the result
+        if (bytesSent == -1) {
+            qDebug() << "Failed to send packet" << i << ":" << socket->errorString();
+            break;
+        } else {
+            qDebug() << "Packet" << i << "sent with size" << bytesSent;
+            bytesSentTotal += bytesSent;
+        }
+    }
+
+    // Final log to confirm if entire image data was sent
+    if (bytesSentTotal == (totalSize + numPackets*4)) {
+        qDebug() << "Entire image sent successfully. Total size:" << bytesSentTotal;
+    } else {
+        qDebug() << "Error: Not all data sent. Total sent:" << bytesSentTotal << "of" << totalSize;
+    }
 }
 
 QByteArray &operator<<(QByteArray &l, quint8 r)
