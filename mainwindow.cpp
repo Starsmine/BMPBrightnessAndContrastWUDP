@@ -237,7 +237,7 @@ void MainWindow::on_pushButton_3_released()
 void MainWindow::initSocket()
 {
     socket = new QUdpSocket(this);
-    //addr = new QHostAddress("192.168.0.124");
+    //addr = new QHostAddress("192.168.0.73");
     socketTcp = new QTcpSocket(this);
 
 }
@@ -263,50 +263,8 @@ void MainWindow::UDPoutput()
 
 void MainWindow::on_TransferPhoto_pressed()
 {
-  //   QByteArray datagram = QByteArray::fromRawData((const char*)img.bits(), img.sizeInBytes());
-  //   int count = 0;
-  //  // std::string dsize = std::to_string(img.sizeInBytes());
-  //   //std::cout << "hello world?";
-  //   //std::cout << dsize;
-  //   //const char* s = dsize.c_str();
-  //   QDataStream datagramstream = datagram;
-
-  //   //
-  //   QByteArray buffer(6+3*img.width()*img.height(), 0 );
-  //   QDataStream stream( &buffer, QIODevice::WriteOnly );
-  //   stream.setVersion( QDataStream::Qt_5_11 );
-
-  //   stream << (quint16)img.width() << (quint16)img.height();
-
-  // //  quint16 y = qrand() % img.height();
-
-  // //  stream << y;
-
-  //   for( int x=0; x<img.width(); ++x )
-  //   {
-  //       stream.startTransaction();
-  //       for( int y=0; y<img.height(); ++y )
-  //       {
-  //       QRgb rgb = img.pixel( x, y );
-
-  //       stream << (quint8)qRed( rgb ) << (quint8)qGreen( rgb ) << (quint8)qBlue( rgb );
-  //       }
-  //       socket->writeDatagram( buffer, QHostAddress("192.168.215.124"), 81 );
-  //       stream.commitTransaction();
-  //       stream.resetStatus();
-  //   }
-
-  //  socket->writeDatagram( buffer, QHostAddress("192.168.215.124"), 81 );
-//    printf(s);
-   // while () {
-   //     socket->writeDatagram(datagramstream, 1024,  QHostAddress("192.168.215.124"), 80);
-    //}
-   //printf(datagram);
-
-
-  //to do - serialize, and header to be base
-      //QByteArray datagram = QByteArray::fromRawData((const char*)img.bits(), img.sizeInBytes());
       QByteArray datagram;
+      QByteArray emptyDatagram;
       QBuffer buffer(&datagram);
       buffer.open(QIODevice::WriteOnly);
       img.save(&buffer, "BMP");
@@ -342,6 +300,7 @@ void MainWindow::on_TransferPhoto_pressed()
           }
       }
 
+      socket->writeDatagram(emptyDatagram, QHostAddress(addr), 80);
       // Final log to confirm if entire image data was sent
       if (bytesSentTotal == (totalSize + numPackets*4)) {
           qDebug() << "Entire image sent successfully. Total size:" << bytesSentTotal;
@@ -355,6 +314,7 @@ void MainWindow::on_TransferPhoto_pressed()
 void MainWindow::on_TransferOverlay_pressed()
 {
     QByteArray datagram;
+    QByteArray emptyDatagram;
     QBuffer buffer(&datagram);
     buffer.open(QIODevice::WriteOnly);
     img2.save(&buffer, "BMP");
@@ -389,6 +349,7 @@ void MainWindow::on_TransferOverlay_pressed()
         }
     }
 
+    socket->writeDatagram(emptyDatagram, QHostAddress(addr), 80);
     // Final log to confirm if entire image data was sent
     if (bytesSentTotal == (totalSize + numPackets*4)) {
         qDebug() << "Entire image sent successfully. Total size:" << bytesSentTotal;

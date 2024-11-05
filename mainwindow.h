@@ -64,7 +64,7 @@ private:
     int contrastOutput = 50;
     QUdpSocket *socket;
     QTcpSocket *socketTcp;
-    QString addr = "192.168.215.199";
+    QString addr = "192.168.0.196";
 
 };
 #endif // MAINWINDOW_H

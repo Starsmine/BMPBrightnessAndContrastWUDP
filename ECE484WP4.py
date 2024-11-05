@@ -8,32 +8,7 @@ import struct
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
 # UDP Server Info
-UDP_IP = "192.168.215.199"
-UDP_PORT = 80
-
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((UDP_IP, UDP_PORT))
-imagebase = "img1.bmp"
-imageoverlay = "img2.bmp"
-brightness = 50
-contrast = 50
-overlay = 0
-
-# UDP Server Listener
-print("READY")
-root@DE10-Standard:~# clear
-root@DE10-Standard:~# cat ECE484WP4.py
-import mmap
-import os
-import time
-import socket
-from PIL import Image
-import struct
-
-hostname = socket.gethostname()
-IPAddr = socket.gethostbyname(hostname)
-# UDP Server Info
-UDP_IP = "192.168.215.199"
+UDP_IP = "0.0.0.0"
 UDP_PORT = 80
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -66,7 +41,7 @@ while True:
                                         f.write(data[4:])
                                         number = ord(data[1])
                                         print(number)
-                if ord(data[2]) == 1:
+                elif ord(data[2]) == 1:
                         with open(imageoverlay, "wb") as f:
                                 if not data:
                                         break
@@ -82,6 +57,7 @@ while True:
                                         f.write(data[4:])
                                         number = ord(data[1])
                                         print(number)
+
 
 
 
