@@ -11,11 +11,11 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
@@ -43,7 +43,7 @@ public:
     QPushButton *pushButton_5;
     QPushButton *TransferPhoto;
     QPushButton *TransferOverlay;
-    QRadioButton *radioButton;
+    QCheckBox *checkBox;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -122,9 +122,10 @@ public:
         TransferOverlay = new QPushButton(centralwidget);
         TransferOverlay->setObjectName(QString::fromUtf8("TransferOverlay"));
         TransferOverlay->setGeometry(QRect(700, 350, 101, 41));
-        radioButton = new QRadioButton(centralwidget);
-        radioButton->setObjectName(QString::fromUtf8("radioButton"));
-        radioButton->setGeometry(QRect(810, 380, 111, 20));
+        checkBox = new QCheckBox(centralwidget);
+        checkBox->setObjectName(QString::fromUtf8("checkBox"));
+        checkBox->setGeometry(QRect(820, 380, 131, 20));
+        checkBox->setTristate(false);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -157,7 +158,7 @@ public:
         pushButton_5->setText(QCoreApplication::translate("MainWindow", "Reset", nullptr));
         TransferPhoto->setText(QCoreApplication::translate("MainWindow", "Transfer Photo", nullptr));
         TransferOverlay->setText(QCoreApplication::translate("MainWindow", "Transfer Overlay", nullptr));
-        radioButton->setText(QCoreApplication::translate("MainWindow", "Toggle Overlay", nullptr));
+        checkBox->setText(QCoreApplication::translate("MainWindow", "Toggle Overlay", nullptr));
     } // retranslateUi
 
 };

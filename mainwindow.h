@@ -45,6 +45,8 @@ private slots:
 
     void on_TransferOverlay_pressed();
 
+    void on_checkBox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     //base
@@ -64,7 +66,7 @@ private:
     int contrastOutput = 50;
     QUdpSocket *socket;
     QTcpSocket *socketTcp;
-    QString addr = "192.168.0.196";
+    QString addr = "192.168.0.231";
 
 };
 #endif // MAINWINDOW_H

@@ -369,3 +369,15 @@ QByteArray &operator<<(QByteArray &l, quint16 r)
     return l<<quint8(r>>8)<<quint8(r);
 }
 
+
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if (img2.isNull())
+        ui->checkBox->setCheckState(Qt::Unchecked);
+    int i = int(ui->checkBox->checkState());
+    QByteArray datagram;
+    datagram.append(i);
+    socket->writeDatagram(datagram, QHostAddress(addr), 80);
+}
+
