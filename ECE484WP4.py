@@ -2,8 +2,24 @@ import mmap
 import os
 import time
 import socket
-from PIL import Image
+from PIL import Image, ImageDraw, ImageEnhance
 import struct
+
+def showimg():
+        with Image.open (imagebase) as im:
+                im.show()
+def modbrightness():
+        with Image.open (imagebase) as im:
+                factor = brightness/50.0
+                enhancer = ImageEnhance.Brighntess(im)
+                enhancer.enhance(factor).show()
+def modcontrast():
+        #todo
+        factor = contrast/50.0
+def overlayimg(isOverlay):
+        #todo
+        factor = 0;
+
 
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
@@ -28,6 +44,8 @@ while True:
                 if ord(data[2]) == 0:
                         with open(imagebase, "wb") as f:
                                 if not data:
+                                        f.close()
+                                        showimg()
                                         break
                                 f.write(data[4:])
                                 number = ord(data[1])
@@ -37,6 +55,7 @@ while True:
                                         data, addr = sock.recvfrom(1024)
                                         if not data:
                                                 f.close()
+                                                showimg()
                                                 break
                                         f.write(data[4:])
                                         number = ord(data[1])
@@ -58,6 +77,24 @@ while True:
                                         number = ord(data[1])
                                         print(number)
 
-
+        elif data.__sizeof__() > 24:
+                bnum10 = data[0]
+                bnum1 = data[1]
+                cnum10 = data[2]
+                cnum1 = data[3]
+                bnum = bnum10 + bnum1
+                cnum = cnum10 + cnum1
+                print("brightness = " + bnum)
+                print("contrast = " + cnum)
+                brightness = int(bnum)
+                contrast = int(cnum)
+                #modbrightness()
+                #modcontrast
+        elif data.__sizeof__() < 24:
+                overlay = odr(data[0])
+                if overlay == 2:
+                        overlayimg(True)
+                elif overlay == 0:
+                        overlayimg(False)
 
 
