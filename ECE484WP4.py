@@ -10,16 +10,30 @@ def showimg():
                 im.show()
 def modbrightness():
         with Image.open (imagebase) as im:
-                factor = brightness/50.0
-                enhancer = ImageEnhance.Brighntess(im)
-                enhancer.enhance(factor).show()
+            factor = brightness/50.0
+            enhancer = ImageEnhance.Brightness(im)
+            enhanced_image = enhancer.enhance(factor)
+            enhanced_image.save(imagebase) #save the image to retain change.
+            enhanced_image.show() #Displaying the adjusted image
+                
 def modcontrast():
-        #todo
-        factor = contrast/50.0
+    with Image.open (imagebase) as im:
+        factor = contrast/50.0 #Calculating the factor based on the received contrast value
+        enhancer = ImageEnhance.Contrast(im) #Initializing the contrast enhancer
+        enhanced_image = enhancer.enhance(factor) #Applying the contrast adjustment
+        enhanced_image.save(imagebase) #save the image to retain change.
+        enhanced_image.show() #Displaying the adjusted image
+        
 def overlayimg(isOverlay):
-        #todo
-        factor = 0;
-
+        if isOverlay:
+            with Image.open(imagebase) as base, Image.open(imageoverlay) as overlay:
+                base = base.convert("RGBA")
+                overlay = overlay.convert("RGBA")
+            
+                #overlaying the images
+                combinedImage = Image.alpha_composite(base, overlay) #base beneath overlay
+                combinedImage.show()
+                combinedImage.save("combinedImage.bmp")
 
 hostname = socket.gethostname()
 IPAddr = socket.gethostbyname(hostname)
@@ -88,13 +102,14 @@ while True:
                 print("contrast = " + cnum)
                 brightness = int(bnum)
                 contrast = int(cnum)
-                #modbrightness()
-                #modcontrast
+                
+                #Applying brightness and contrast
+                modbrightness()
+                modcontrast()
+                
         elif data.__sizeof__() < 24:
-                overlay = odr(data[0])
+                overlay = ord(data[0])
                 if overlay == 2:
                         overlayimg(True)
                 elif overlay == 0:
                         overlayimg(False)
-
-
