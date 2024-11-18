@@ -5,8 +5,8 @@ from PIL import Image, ImageEnhance
 # Global Variables
 imagebase = "img1.bmp"
 imageoverlay = "img2.bmp"
-brightness = 50  # Default brightness (range: 0-100)
-contrast = 50    # Default contrast (range: 0-100)
+brightness = 50  # Default brightness (range: 0-99)
+contrast = 50    # Default contrast (range: 0-99)
 isOverlayOn = False  # Track overlay state
 
 def show_image(image_path):
@@ -23,7 +23,7 @@ def apply_adjustments():
 
             # Adjust brightness
             brightness_factor = brightness / 50.0  
-	    brightness_factor = brightness_factor ** 1.5
+	        brightness_factor = brightness_factor ** 1.5
             brightness_enhancer = ImageEnhance.Brightness(base)
             base = brightness_enhancer.enhance(brightness_factor)
 
