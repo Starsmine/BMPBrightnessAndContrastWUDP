@@ -92,6 +92,18 @@ int main() {
         // Resize the camera frame to match overlay resolution
         resize(src, src, targetSize);
 
+        //fps counter for displaying performance
+        gettimeofday(&current_time, NULL);
+        t = (current_time.tv_sec - last_time.tv_sec)
+            + (current_time.tv_usec - last_time.tv_usec) / 1000000.;
+        fps = 1. / t;
+        fps = last_fps * 0.8 + fps * 0.2;
+        last_fps = fps;
+        last_time = current_time;
+        sprintf(str, "%2.2f, %2.6f", fps, t);
+        putText(src, str, Point(20, 40), FONT_HERSHEY_DUPLEX, 1,
+            Scalar(0, 255, 0));
+
         // Adjust brightness
         double brightnessFactor = brightness / 50.0;
         brightnessFactor = pow(brightnessFactor, 3.0); // Apply non-linear scaling
@@ -109,7 +121,7 @@ int main() {
             bitwise_and(src, src, finalFrame, mask); // Use mask to apply overlay
         } else {
             finalFrame = src.clone();
-        }
+        }  
 
         // Display the final output on the LCD screen
         imshow("LCD Output", finalFrame);
