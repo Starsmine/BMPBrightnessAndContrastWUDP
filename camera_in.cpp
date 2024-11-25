@@ -15,7 +15,7 @@ using namespace std;
 #endif /* ifndef CAPTURE_RAM_DEVICE */
 
 // Function to read brightness, contrast, and overlay state from the pipe
-void readPipe(double &brightness, double &contrast, bool &overlayOn) {
+void readPipe(double& brightness, double& contrast, bool& overlayOn) {
     string line;
     while (true) {
         ifstream pipe("/tmp/imagepipe");
@@ -24,7 +24,7 @@ void readPipe(double &brightness, double &contrast, bool &overlayOn) {
             if (line.size() >= 5) {
                 brightness = stoi(line.substr(0, 2));
                 contrast = stoi(line.substr(2, 2));
-                overlayOn = stoi(line.substr(4, 1)) == 1;
+                overlayOn = stoi(line.substr(4, 1));
             }
             pipe.close();
         }
@@ -33,14 +33,14 @@ void readPipe(double &brightness, double &contrast, bool &overlayOn) {
 }
 
 // Adjust brightness based on factor
-void adjustBrightness(Mat &frame, double factor) {
+void adjustBrightness(Mat& frame, double factor) {
     if (factor != 1.0) {
         frame.convertTo(frame, -1, factor, 0);
     }
 }
 
 // Adjust contrast based on factor
-void adjustContrast(Mat &frame, double factor) {
+void adjustContrast(Mat& frame, double factor) {
     Mat meanMat;
     Scalar meanIntensity = mean(frame);
     frame.convertTo(frame, CV_32F); // Convert to float for accurate scaling
@@ -54,7 +54,16 @@ int main() {
     Mat src, overlay, overlayResized, mask, finalFrame;
     double brightness = 50.0;  // Default brightness (range: 0-99)
     double contrast = 50.0;    // Default contrast (range: 0-99)
-    bool overlayOn = false;    // Toggle overlay state
+    bool overlayOn = true;    // Toggle overlay state
+
+    //fps vars
+    char str[100];
+    static struct timeval last_time;
+    struct timeval current_time;
+    static float last_fps;
+    float t;
+    float fps;
+
 
     // Load the overlay image
     overlay = imread("img2.bmp", IMREAD_GRAYSCALE);
@@ -66,12 +75,16 @@ int main() {
     // Resize the overlay to match the camera resolution
     Size targetSize(800, 480); // Update if the resolution changes
     resize(overlay, overlayResized, targetSize);
+    overlayResized = overlayResized.reshape(4, 0);
+    resize(overlayResized, overlayResized, targetSize);
 
     // Create a binary mask for overlay application
     threshold(overlayResized, mask, 200, 255, THRESH_BINARY); // Mask for white regions
 
+
+
     // Initialize the camera
-    D8MCapture *cap = new D8MCapture(TV_DECODER_TERASIC_STREAM_CAPTURE_BASE, CAPTURE_RAM_DEVICE);
+    D8MCapture* cap = new D8MCapture(TV_DECODER_TERASIC_STREAM_CAPTURE_BASE, CAPTURE_RAM_DEVICE);
     if (!cap->isOpened()) {
         cerr << "Error: Unable to open video capture device!" << endl;
         return -1;
@@ -90,7 +103,7 @@ int main() {
         }
 
         // Resize the camera frame to match overlay resolution
-        resize(src, src, targetSize);
+        //resize(src, src, targetSize);
 
         //fps counter for displaying performance
         gettimeofday(&current_time, NULL);
@@ -116,18 +129,34 @@ int main() {
         }
         adjustContrast(src, contrastFactor);
 
+
+        /*
+        // alt design
+        double brightnessFactor = brightness/50 + 1;
+        contrastFactor = contrast;
+        for(int y = 0; y < src.rows; y++) {
+                for( int x = 0; x < src.cols; x++) {
+                        for int c = 0; c < src.channnels(); c++) {
+                        src.at<Vec3b>(y,x)[c] = saturate_cast<uchar>(birghtnessFactor*src.at<Vec3b>(y,x)[c] + contrastFactor);
+                        }
+                }
+        }
+        */
+
         // Apply overlay if enabled
         if (overlayOn) {
-            bitwise_and(src, src, finalFrame, mask); // Use mask to apply overlay
-        } else {
+            bitwise_and(src, mask, finalFrame); // Use mask to apply overlay
+        }
+        else {
             finalFrame = src.clone();
-        }  
+        }
 
         // Display the final output on the LCD screen
         imshow("LCD Output", finalFrame);
 
         // Exit if 'ESC' key is pressed
-        if (waitKey(10) == 27) {
+        int c = waitKey(10);
+        if ((char)c == 27) {
             break;
         }
     }
